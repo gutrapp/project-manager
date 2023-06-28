@@ -1,15 +1,10 @@
 db.sqlite3
 crud-api
+lib
 app/__pycache__
 
-projects/migrations
-projects/__pycache__
+users/migrations
+users/__pycache__
 
-developer/migrations
-developer/__pycache__
-
-bug/migrations
-bug/__pycache__
-
-task/migrations
-task/__pycache__
+core/migrations
+core/__pycache__
