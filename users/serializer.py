@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Project, Developer, Team
+from .models import Project, Developer, Bug, Task
 
 
 class DeveloperSerializer(serializers.ModelSerializer):
@@ -12,7 +12,14 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = '__all__'
 
-class TeamSerializer(serializers.ModelSerializer):
+class BugSerializer(serializers.ModelSerializer):
+    bugs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
-        model = Team
+        model = Bug
+        fields = '__all__'
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
         fields = '__all__'
