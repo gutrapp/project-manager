@@ -6,5 +6,3 @@ app/__pycache__
 users/migrations
 users/__pycache__
 
-core/migrations
-core/__pycache__
