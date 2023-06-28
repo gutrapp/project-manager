@@ -1,0 +1,15 @@
+db.sqlite3
+crud-api
+app/__pycache__
+
+projects/migrations
+projects/__pycache__
+
+developer/migrations
+developer/__pycache__
+
+bug/migrations
+bug/__pycache__
+
+task/migrations
+task/__pycache__
