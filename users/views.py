@@ -5,6 +5,33 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # +==============================================================================================================================+
+# |                                                          AUTH VIEWS                                                          |
+# +==============================================================================================================================+
+
+@api_view(['POST'])
+def login(request):
+    email = request.data['email']
+    password = request.data['password']
+    developer = Developer.objects.get(email=email, password=password)
+
+    if developer is not None:
+        developer.is_active = True
+        developer.save()
+        request.session['email'] = email
+        return Response({"message": "Logged in successfuly"}, status=status.HTTP_200_OK)
+    else:
+        return Response({"message": "Credentials are incorrect"}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['DELETE'])
+def logout(request, email):
+    developer = Developer.objects.get(email=email)
+    developer.is_active(False)
+    developer.save()
+    request.session['email'] = None
+    return Response({"message": "Logged out successfuly"}, status=status.HTTP_200_OK)
+
+
+# +==============================================================================================================================+
 # |                                                          DEVELOPER VIEWS                                                     |
 # +==============================================================================================================================+
 

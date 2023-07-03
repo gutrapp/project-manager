@@ -1,8 +1,16 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import UserManager
+
 
 class Developer(models.Model):
-    name = models.CharField(max_length=20)
+    username = models.CharField(max_length=20)
+    first_name = models.CharField(max_length=40)
+    last_name = models.CharField(max_length=40)
     age = models.IntegerField()
+    email = models.CharField(max_length=70, unique=True)
+    password = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=False)
 
 class Project(models.Model):
     name = models.CharField(max_length=20)
