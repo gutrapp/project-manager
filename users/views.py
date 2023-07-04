@@ -1,53 +1,39 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .models import Project, Developer, Bug, Task
 from .serializer import DeveloperSerializer, ProjectSerializer, BugSerializer, TaskSerializer
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
+from django.contrib.auth.models import User
 
 # +==============================================================================================================================+
 # |                                                          AUTH VIEWS                                                          |
 # +==============================================================================================================================+
 
-@api_view(['POST'])
+@api_view([])
+@permission_classes(permissions.AllowAny)
 def login(request):
-    email = request.data['email']
-    password = request.data['password']
-    developer = Developer.objects.get(email=email, password=password)
+    data = request.data
 
-    if developer is not None:
-        developer.is_active = True
-        developer.save()
-        request.session['email'] = email
-        return Response({"message": "Logged in successfuly"}, status=status.HTTP_200_OK)
-    else:
-        return Response({"message": "Credentials are incorrect"}, status=status.HTTP_401_UNAUTHORIZED)
+    email = data['email']
+    password = data['password']
+    
+    if User.objects.filter(email=email).exists():
+        return Response({"message": "Developer already exists"}, status=status.HTTP_208_ALREADY_REPORTED)
+    
+    user = User.objects.create_user(email=email, password=password)
+    user.save()
 
-@api_view(['DELETE'])
-def logout(request, email):
-    developer = Developer.objects.get(email=email)
-    developer.is_active(False)
-    developer.save()
-    request.session['email'] = None
-    return Response({"message": "Logged out successfuly"}, status=status.HTTP_200_OK)
-
+    user = User.objects.get(email=email)
 
 # +==============================================================================================================================+
 # |                                                          DEVELOPER VIEWS                                                     |
 # +==============================================================================================================================+
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 def developer_list(request):
-    if request.method == 'GET':
-        developers = Developer.objects.all()
-        serializer = DeveloperSerializer(developers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    if request.method == 'POST':
-        serializer = DeveloperSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Developer created successfuly"}, status=status.HTTP_200_OK)
-        return Response({"message": "Data provided is invalid"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    developers = Developer.objects.all()
+    serializer = DeveloperSerializer(developers, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def developer_detail(request, id):
